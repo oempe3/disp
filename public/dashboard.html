@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel - Disponibilidade</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav>
+    <span id="user-info"></span>
+    <button id="btn-logout">Sair</button>
+  </nav>
+  <main>
+    <h2>Painel de controle</h2>
+    <textarea id="shared-text" placeholder="Digite algo e sincronize..."></textarea>
+  </main>
+  <script type="module">
+    import { logout, isAuthenticated, currentUser } from './auth/api.js';
+
+    if (!isAuthenticated()) location.href = '/';
+
+    const user = currentUser();
+    document.getElementById('user-info').textContent = 'Olá, ' + (user.name || user.nickname);
+    document.getElementById('btn-logout').onclick = () => logout('/');
+
+    const txt = document.getElementById('shared-text');
+    txt.value = localStorage.getItem('shared-text') || '';
+    txt.oninput = () => localStorage.setItem('shared-text', txt.value);
+    window.addEventListener('storage', e => {
+      if (e.key === 'shared-text') txt.value = e.newValue;
+    });
+  </script>
+</body>
+</html>
